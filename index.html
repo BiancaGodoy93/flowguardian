@@ -36,7 +36,6 @@
       line-height: 1.6;
     }
 
-    /* HEADER / NAV */
     header {
       position: sticky;
       top: 0;
@@ -96,7 +95,6 @@
       opacity: 0.85;
     }
 
-    /* HERO */
     .hero {
       background: linear-gradient(135deg, var(--dark-blue) 0%, var(--light-blue) 100%);
       color: var(--white);
@@ -203,7 +201,6 @@
       color: var(--dark-blue);
     }
 
-    /* SEÇÃO: O PROBLEMA */
     .section {
       padding: 80px 40px;
       max-width: 1200px;
@@ -257,7 +254,6 @@
       line-height: 1.8;
     }
 
-    /* SEÇÃO: SOLUÇÃO */
     .solution {
       background: var(--gray-light);
     }
@@ -317,7 +313,6 @@
       font-weight: 600;
     }
 
-    /* SEÇÃO: FUNCIONALIDADES */
     .features {
       background: var(--white);
     }
@@ -363,7 +358,6 @@
       line-height: 1.7;
     }
 
-    /* SEÇÃO: EXEMPLO */
     .example {
       background: var(--dark-blue);
       color: var(--white);
@@ -401,7 +395,6 @@
       line-height: 1.8;
     }
 
-    /* SEÇÃO: CTA */
     .cta {
       background: var(--yellow);
       color: var(--dark-blue);
@@ -450,7 +443,6 @@
       opacity: 0.85;
     }
 
-    /* FOOTER */
     footer {
       background: var(--dark-blue);
       color: var(--white);
@@ -460,7 +452,6 @@
       opacity: 0.8;
     }
 
-    /* RESPONSIVO */
     @media (max-width: 768px) {
       header {
         flex-direction: column;
@@ -514,7 +505,8 @@
       <a href="#solucao">Solução</a>
       <a href="#capacidades">Capacidades</a>
       <a href="#exemplo">Exemplo</a>
-      <button class="btn-access" onclick="document.querySelector('.cta').scrollIntoView()">Acessar Protocolo</button>
+      <a href="#gerador">Gerar Comando</a>
+      <button class="btn-access" onclick="document.querySelector('.cta').scrollIntoView()">Executar</button>
     </nav>
   </header>
 
@@ -670,11 +662,58 @@ Preciso de:
     </div>
   </section>
 
+  <!-- GERADOR DE COMANDO -->
+  <section id="gerador" class="section" style="background: var(--gray-light);">
+    <h2 class="section-title">Gere seu <span>Comando</span></h2>
+    <div style="max-width: 700px; margin: 0 auto; background: var(--white); padding: 40px; border-radius: 12px; border: 2px solid var(--gray-medium);">
+      
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark-blue); font-size: 14px;">Link do Board Jira</label>
+        <input type="url" id="linkBoard" placeholder="https://abasteceai.atlassian.net/jira/software/c/projects/..." style="width: 100%; padding: 12px; border: 1px solid var(--gray-medium); border-radius: 8px; font-size: 13px; font-family: 'Nunito Sans';">
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark-blue); font-size: 14px;">Período</label>
+        <input type="text" id="periodo" placeholder="Ex: Maio 2026" style="width: 100%; padding: 12px; border: 1px solid var(--gray-medium); border-radius: 8px; font-size: 13px; font-family: 'Nunito Sans';">
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark-blue); font-size: 14px;">Nome do Projeto (opcional)</label>
+        <input type="text" id="projeto" placeholder="Ex: B2B" style="width: 100%; padding: 12px; border: 1px solid var(--gray-medium); border-radius: 8px; font-size: 13px; font-family: 'Nunito Sans';">
+      </div>
+
+      <div style="margin-bottom: 32px;">
+        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark-blue); font-size: 14px;">Foco da Análise</label>
+        <select id="foco" style="width: 100%; padding: 12px; border: 1px solid var(--gray-medium); border-radius: 8px; font-size: 13px; font-family: 'Nunito Sans';">
+          <option value="executivo">Resumo Executivo</option>
+          <option value="roadmap">Análise de Roadmap</option>
+          <option value="gargalos">Análise de Gargalos</option>
+          <option value="epicos">Análise de Épicos</option>
+          <option value="completo">Análise Completa</option>
+        </select>
+      </div>
+
+      <div style="background: var(--gray-light); padding: 16px; border-radius: 8px; margin-bottom: 24px; min-height: 120px; border: 1px dashed var(--gray-medium); font-family: 'Nunito Sans';">
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600;">Seu comando (pronto pra copiar):</p>
+        <pre id="comandoGerado" style="font-size: 12px; line-height: 1.6; color: var(--text-dark); white-space: pre-wrap; word-wrap: break-word; margin: 0;">Clique em "Gerar Comando" para ver aqui</pre>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button onclick="gerarComando()" style="flex: 1; background: var(--orange); color: var(--white); padding: 14px; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; transition: opacity 0.2s; font-family: 'Nunito';" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+          Gerar Comando
+        </button>
+        <button onclick="copiarComando()" style="flex: 1; background: var(--dark-blue); color: var(--yellow); padding: 14px; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; transition: opacity 0.2s; font-family: 'Nunito';" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+          Copiar
+        </button>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA -->
   <section id="cta" class="section cta">
     <div class="cta-content">
       <h2>Comece Agora</h2>
-      <p>O protocolo completo tem passo-a-passo detalhado, exemplos de comando, templates reutilizáveis e boas práticas. Tudo que você precisa para usar Claude como seu analista operacional.</p>
+      <p>O protocolo completo tem passo-a-passo detalhado, exemplos de comando, templates reutilizáveis e boas práticas. Tudo que você precisa para usar FlowGuardIAn como seu analista operacional.</p>
       <div class="cta-buttons">
         <a href="https://abasteceai.atlassian.net" class="btn-dark" target="_blank">Abrir Jira</a>
         <button class="btn-dark" onclick="alert('Protocolo disponível. Envie: Analise a saúde do board [PROJETO] para [PERÍODO].')">Ver Protocolo</button>
@@ -687,5 +726,63 @@ Preciso de:
   <footer>
     <p>FlowGuardIAn © 2026 | Time de Agilidade, Produtos Digitais Ipiranga</p>
   </footer>
+
+  <script>
+    function gerarComando() {
+      const link = document.getElementById('linkBoard').value;
+      const periodo = document.getElementById('periodo').value;
+      const projeto = document.getElementById('projeto').value;
+      const foco = document.getElementById('foco').value;
+
+      if (!link || !periodo) {
+        alert('Preencha pelo menos o link do board e o período');
+        return;
+      }
+
+      const focoTexto = {
+        'executivo': '- Resumo executivo\n- Principais riscos com evidência\n- Principais bloqueios\n- Recomendações acionáveis',
+        'roadmap': '- Iniciativas com risco de atraso\n- Dependências críticas\n- Concentração excessiva de entregas\n- Sprints sobrecarregadas\n- Riscos ocultos',
+        'gargalos': '1. Padrões de bloqueio\n2. Gargalos de fluxo (por etapa)\n3. Itens parados há muito tempo\n4. Handoffs excessivos\n5. Causa raiz dos detratores',
+        'epicos': '1. Progresso esperado vs real\n2. Itens sem atualização\n3. Ausência de owner\n4. Dependências pendentes\n5. Riscos de spillover',
+        'completo': '- Resumo executivo\n- Principais riscos com evidência\n- Principais bloqueios\n- Itens críticos\n- Insights estratégicos\n- Recomendações acionáveis'
+      };
+
+      const comando = `Analise a saúde do board ${projeto || '[PROJETO]'} para ${periodo}.
+
+URL do board: ${link}
+
+Preciso de:
+${focoTexto[foco]}
+
+Estruture como:
+- Resumo executivo
+- Principais riscos (com evidência)
+- Principais bloqueios
+- Itens críticos
+- Insights estratégicos
+- Recomendações acionáveis`;
+
+      document.getElementById('comandoGerado').textContent = comando;
+    }
+
+    function copiarComando() {
+      const comando = document.getElementById('comandoGerado').textContent;
+      
+      if (comando.includes('Clique em')) {
+        alert('Gere o comando primeiro');
+        return;
+      }
+
+      navigator.clipboard.writeText(comando).then(() => {
+        alert('Comando copiado! Cole no chat com FlowGuardIAn');
+      }).catch(() => {
+        alert('Erro ao copiar. Tente novamente.');
+      });
+    }
+
+    document.getElementById('linkBoard').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') gerarComando();
+    });
+  </script>
 </body>
 </html>
