@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FlowGuardIAn — Consulta de Análise Operacional</title>
   <style>
+    /* RESET — zera margem/padding padrão do navegador em todos os elementos */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    /* DESIGN TOKENS — paleta de cores e sombras usadas em toda a página */
     :root {
       --blue-primary: #0245B5;
       --blue-dark: #012B70;
@@ -25,6 +27,7 @@
       --shadow-heavy: 0 24px 70px rgba(1, 43, 112, 0.14);
     }
 
+    /* FUNDO E TIPOGRAFIA GLOBAIS — aplica a fonte e o gradiente de fundo em toda a página */
     html, body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
       color: var(--text-primary);
@@ -32,12 +35,13 @@
       min-height: 100vh;
     }
 
+    /* LAYOUT GERAL — container que divide a página em sidebar (esquerda) + conteúdo principal (direita) */
     .shell {
       display: flex;
       min-height: 100vh;
     }
 
-    /* SIDEBAR */
+    /* SIDEBAR — faixa azul fixa à esquerda (logo, menu de navegação e versão) */
     .sidebar {
       width: 280px;
       background: linear-gradient(180deg, var(--blue-dark) 0%, #0a1f45 100%);
@@ -50,6 +54,7 @@
       z-index: 100;
     }
 
+    /* Bloco do nome "FlowGuardIAn" + subtítulo, no topo da sidebar */
     .sidebar-brand {
       margin-bottom: 48px;
       padding-bottom: 24px;
@@ -70,6 +75,7 @@
       letter-spacing: 0.5px;
     }
 
+    /* Lista de links "Módulos / Configuração / Comando" que rola até cada seção */
     .sidebar-nav {
       display: flex;
       flex-direction: column;
@@ -93,12 +99,14 @@
       color: white;
     }
 
+    /* Destaque amarelo do link ativo, controlado pelo JS ao clicar num item do menu */
     .sidebar-nav-link.active {
       background: rgba(255, 209, 0, 0.1);
       color: var(--yellow);
       border-left-color: var(--yellow);
     }
 
+    /* Rodapé fixo da sidebar com número da versão, colado na parte de baixo */
     .sidebar-version {
       position: absolute;
       bottom: 24px;
@@ -112,7 +120,7 @@
       opacity: 0.6;
     }
 
-    /* MAIN */
+    /* MAIN — área à direita da sidebar, contém o hero + todo o conteúdo + rodapé */
     .main {
       margin-left: 280px;
       flex: 1;
@@ -120,6 +128,7 @@
       flex-direction: column;
     }
 
+    /* HERO — banner azul de topo com o título "FlowGuardIAn" e a descrição do agente */
     .hero {
       background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-dark) 100%);
       color: white;
@@ -132,6 +141,7 @@
       align-items: center;
     }
 
+    /* Círculo amarelo translúcido decorativo que flutua no fundo do hero */
     .hero::before {
       content: '';
       position: absolute;
@@ -144,6 +154,7 @@
       animation: float 20s ease-in-out infinite;
     }
 
+    /* Animação de flutuação usada pelo círculo decorativo acima */
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(20px); }
@@ -177,7 +188,7 @@
       max-width: 700px;
     }
 
-    /* CONTENT */
+    /* CONTENT — corpo central abaixo do hero, envolve as 3 seções: Módulos, Configuração e Comando Gerado */
     .content {
       padding: 60px;
       flex: 1;
@@ -186,6 +197,7 @@
       margin: 0 auto;
     }
 
+    /* Espaçamento entre cada uma das 3 seções (Módulos / Configuração / Comando) */
     .section {
       margin-bottom: 80px;
     }
@@ -203,7 +215,7 @@
       margin-bottom: 32px;
     }
 
-    /* MÓDULOS GRID */
+    /* MÓDULOS GRID — grade responsiva com os 3 cartões de módulo (Diagnóstico/Impacto/Consolidação) */
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
@@ -211,6 +223,7 @@
       margin-bottom: 60px;
     }
 
+    /* Cartão branco de cada módulo: header + lista "Analisa" + rodapé com botões */
     .module-card {
       background: white;
       border-radius: 24px;
@@ -227,6 +240,7 @@
       box-shadow: var(--shadow-heavy);
     }
 
+    /* Cor da borda superior de cada cartão: amarelo = Diagnóstico, laranja = Impacto, azul = Consolidação */
     .module-card.diagnostic {
       border-top-color: var(--yellow);
     }
@@ -239,6 +253,7 @@
       border-top-color: var(--blue-primary);
     }
 
+    /* Topo do cartão: título do módulo (ex. "Diagnóstico Operacional") + descrição curta */
     .module-header {
       padding: 32px;
       border-bottom: 1px solid var(--border);
@@ -258,6 +273,7 @@
       line-height: 1.5;
     }
 
+    /* Meio do cartão: bloco "Analisa" com a lista de itens cobertos pelo módulo */
     .module-content {
       padding: 24px 32px;
       flex: 1;
@@ -285,6 +301,7 @@
       position: relative;
     }
 
+    /* Marcador "▪" desenhado antes de cada item da lista, no lugar do bullet padrão */
     .module-content li::before {
       content: '▪';
       position: absolute;
@@ -292,6 +309,7 @@
       color: var(--text-muted);
     }
 
+    /* Rodapé do cartão: botões "Consultar Comando" e "Selecionar" */
     .module-footer {
       padding: 24px 32px;
       border-top: 1px solid var(--border);
@@ -300,6 +318,7 @@
       flex-wrap: wrap;
     }
 
+    /* Estilo base compartilhado por todos os botões da página */
     .btn {
       padding: 10px 16px;
       border-radius: 10px;
@@ -315,6 +334,7 @@
       white-space: nowrap;
     }
 
+    /* Botão amarelo de destaque (ação principal, ex. "Consultar Comando", "Gerar Diagnóstico") */
     .btn-primary {
       background: var(--yellow);
       color: var(--blue-dark);
@@ -326,6 +346,7 @@
       box-shadow: 0 8px 20px rgba(255, 209, 0, 0.3);
     }
 
+    /* Botão outline azul (ação secundária, ex. "Selecionar", "Limpar") */
     .btn-secondary {
       background: white;
       color: var(--blue-primary);
@@ -338,7 +359,7 @@
       transform: translateY(-2px);
     }
 
-    /* FORM */
+    /* FORM — cartão branco da seção "Configurar Análise" (Projeto, Board, Datas, Módulos) */
     .form-section {
       background: white;
       border-radius: 24px;
@@ -347,6 +368,7 @@
       margin-bottom: 60px;
     }
 
+    /* Espaçamento entre cada campo (label + input) do formulário */
     .form-group {
       margin-bottom: 32px;
     }
@@ -380,6 +402,7 @@
       box-shadow: 0 0 0 3px rgba(2, 69, 181, 0.1);
     }
 
+    /* Duas colunas lado a lado: usado para o par Projeto/Board e o par Data Início/Data Fim */
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -387,7 +410,7 @@
       margin-bottom: 32px;
     }
 
-    /* CHECKBOXES */
+    /* CHECKBOXES — lista vertical das 3 opções de módulo dentro do formulário */
     .checkbox-group {
       display: flex;
       flex-direction: column;
@@ -419,7 +442,7 @@
       cursor: pointer;
     }
 
-    /* OUTPUT */
+    /* OUTPUT — caixa escura da seção "Comando Gerado", onde aparece o texto pronto pra copiar */
     .output-section {
       background: linear-gradient(135deg, var(--blue-dark) 0%, #0a1f45 100%);
       border-radius: 24px;
@@ -436,6 +459,7 @@
       color: var(--yellow);
     }
 
+    /* Campo de texto (textarea) que recebe o comando gerado pelo JS */
     .output-textarea {
       width: 100%;
       min-height: 350px;
@@ -458,6 +482,7 @@
       box-shadow: 0 0 0 3px rgba(255, 209, 0, 0.1);
     }
 
+    /* Linha de botões "Copiar Comando" / "Limpar", abaixo da textarea */
     .output-actions {
       display: flex;
       gap: 12px;
@@ -501,7 +526,7 @@
       background: rgba(255, 209, 0, 0.05);
     }
 
-    /* FOOTER */
+    /* FOOTER — rodapé cinza-claro com versão e créditos, ao final da página */
     .footer {
       background: var(--bg-light);
       padding: 40px 60px;
@@ -512,7 +537,9 @@
       margin-left: 280px;
     }
 
-    /* RESPONSIVO */
+    /* RESPONSIVO — ajustes de layout para telas menores */
+
+    /* Telas médias: sidebar e área de conteúdo ficam mais estreitas */
     @media (max-width: 1280px) {
       .sidebar {
         width: 240px;
@@ -535,6 +562,7 @@
       }
     }
 
+    /* Tablets: sidebar deixa de ser fixa na lateral e passa pro topo, empilhada com o conteúdo */
     @media (max-width: 1024px) {
       .sidebar {
         position: relative;
@@ -584,6 +612,7 @@
       }
     }
 
+    /* Celulares: reduz padding e tamanho de fonte do título/subtítulo do hero */
     @media (max-width: 768px) {
       .content, .form-section {
         padding: 24px;
@@ -611,36 +640,40 @@
       }
     }
 
-    /* UTILITY */
+    /* UTILITY — classe genérica para esconder um elemento (não usada no HTML atual) */
     .visually-hidden {
       display: none;
     }
   </style>
 </head>
 <body>
+  <!-- Container geral: divide a tela em sidebar (esquerda) + main (direita) via .shell -->
   <div class="shell">
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR: faixa azul fixa à esquerda — logo, menu de navegação e versão -->
     <aside class="sidebar">
+      <!-- Nome do produto e subtítulo, no topo da sidebar -->
       <div class="sidebar-brand">
         <div class="sidebar-brand-title">FlowGuardIAn</div>
         <div class="sidebar-brand-subtitle">Inteligência Operacional</div>
       </div>
 
+      <!-- Menu com âncoras para as 3 seções da página (rola suavemente via JS no final do arquivo) -->
       <nav class="sidebar-nav">
         <a href="#modulos" class="sidebar-nav-link">Módulos</a>
         <a href="#configuracao" class="sidebar-nav-link">Configuração</a>
         <a href="#comando" class="sidebar-nav-link">Comando</a>
       </nav>
 
+      <!-- Selo de versão fixo no rodapé da sidebar -->
       <div class="sidebar-version">
         Versão 1.0.2<br>
         Junho 2026
       </div>
     </aside>
 
-    <!-- MAIN -->
+    <!-- MAIN: tudo que fica à direita da sidebar (hero + conteúdo + rodapé) -->
     <main class="main">
-      <!-- HERO -->
+      <!-- HERO: banner azul de abertura com título e texto de apresentação do agente -->
       <div class="hero">
         <div class="hero-content">
           <div class="hero-title">FlowGuardIAn</div>
@@ -653,15 +686,15 @@
         </div>
       </div>
 
-      <!-- CONTENT -->
+      <!-- CONTENT: corpo central com as 3 seções da página (Módulos / Configuração / Comando Gerado) -->
       <div class="content">
-        <!-- SEÇÃO: MÓDULOS -->
+        <!-- SEÇÃO 1: MÓDULOS — grade com os 3 cartões de módulo disponíveis (id usado pela âncora #modulos) -->
         <section class="section" id="modulos">
           <h2 class="section-title">Módulos Disponíveis</h2>
           <p class="section-desc">Selecione os módulos que deseja executar na sua análise.</p>
 
           <div class="modules-grid">
-            <!-- DIAGNÓSTICO OPERACIONAL -->
+            <!-- Cartão 1/3 — módulo Diagnóstico Operacional (borda amarela via .diagnostic) -->
             <div class="module-card diagnostic">
               <div class="module-header">
                 <div class="module-header-title">Diagnóstico Operacional</div>
@@ -678,13 +711,14 @@
                   <li>Governança</li>
                 </ul>
               </div>
+              <!-- "Consultar Comando" abre um alert() apontando o .md de referência; "Selecionar" marca o checkbox e desce até a seção de Configuração -->
               <div class="module-footer">
                 <button class="btn btn-primary" onclick="consultarComando('diagnostico')">Consultar Comando</button>
                 <button class="btn btn-secondary" onclick="selecionarModulo('diagnostico')">Selecionar</button>
               </div>
             </div>
 
-            <!-- IMPACTO ESTRATÉGICO -->
+            <!-- Cartão 2/3 — módulo Impacto Estratégico (borda laranja via .impact) -->
             <div class="module-card impact">
               <div class="module-header">
                 <div class="module-header-title">Impacto Estratégico</div>
@@ -706,7 +740,7 @@
               </div>
             </div>
 
-            <!-- CONSOLIDAÇÃO EXECUTIVA -->
+            <!-- Cartão 3/3 — módulo Consolidação Executiva (borda azul via .executive) -->
             <div class="module-card executive">
               <div class="module-header">
                 <div class="module-header-title">Consolidação Executiva</div>
@@ -730,12 +764,13 @@
           </div>
         </section>
 
-        <!-- SEÇÃO: CONFIGURAÇÃO -->
+        <!-- SEÇÃO 2: CONFIGURAÇÃO — formulário (cartão branco .form-section) que alimenta o gerador de comando -->
         <section class="section" id="configuracao">
           <h2 class="section-title">Configurar Análise</h2>
           <p class="section-desc">Preencha os dados para gerar o comando customizado.</p>
 
           <form class="form-section">
+            <!-- Linha 1: campos de texto Projeto / Board, lado a lado via .form-row -->
             <div class="form-row">
               <div class="form-group">
                 <label for="projeto">Projeto</label>
@@ -747,6 +782,7 @@
               </div>
             </div>
 
+            <!-- Linha 2: seletores de data Período Inicial / Final -->
             <div class="form-row">
               <div class="form-group">
                 <label for="data-inicio">Período Inicial</label>
@@ -758,6 +794,7 @@
               </div>
             </div>
 
+            <!-- Lista de checkboxes: escolha de 1+ módulos a incluir no comando gerado -->
             <div class="form-group" style="margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--border);">
               <label style="margin-bottom: 16px;">Módulos (Selecione um ou mais)</label>
               <div class="checkbox-group">
@@ -776,6 +813,7 @@
               </div>
             </div>
 
+            <!-- Botões de ação do formulário: gera o comando (lê os campos acima) ou limpa tudo -->
             <div style="margin-top: 40px; display: flex; gap: 12px;">
               <button type="button" class="btn btn-primary" onclick="gerarComando()" style="padding: 14px 32px; font-size: 14px;">Gerar Diagnóstico</button>
               <button type="button" class="btn btn-secondary" onclick="limparFormulario()" style="padding: 14px 32px; font-size: 14px;">Limpar</button>
@@ -783,13 +821,14 @@
           </form>
         </section>
 
-        <!-- SEÇÃO: COMANDO GERADO -->
+        <!-- SEÇÃO 3: COMANDO GERADO — caixa escura .output-section onde o texto final aparece pra copiar -->
         <section class="section" id="comando">
           <h2 class="section-title">Comando Gerado</h2>
           <p class="section-desc">Copie o comando abaixo e cole em um novo chat com Claude.</p>
 
           <div class="output-section">
             <div class="output-title">Pressione "Gerar Diagnóstico" para criar o comando</div>
+            <!-- Preenchida via JS (gerarComando) com o prompt final -->
             <textarea class="output-textarea" id="output-comando" placeholder="O comando aparecerá aqui..."></textarea>
             <div class="output-actions">
               <button class="btn-output" onclick="copiarComando()">Copiar Comando</button>
@@ -799,7 +838,7 @@
         </section>
       </div>
 
-      <!-- FOOTER -->
+      <!-- FOOTER: rodapé com versão e créditos, aparece só uma vez ao final da página -->
       <footer class="footer">
         <p>FlowGuardIAn v1.0.2 · Junho 2026 · Ipiranga Agility</p>
         <p style="margin-top: 8px; opacity: 0.7;">Próxima versão: V2.0 com integração automática Jira API (Q3 2026)</p>
@@ -808,18 +847,21 @@
   </div>
 
   <script>
+    // Nomes de exibição dos módulos (não usado atualmente pelas funções abaixo, mas disponível para futuras telas)
     const moduloNomes = {
       diagnostico: 'DIAGNÓSTICO OPERACIONAL',
       impacto: 'IMPACTO ESTRATÉGICO',
       consolidacao: 'CONSOLIDAÇÃO EXECUTIVA'
     };
 
+    // Botão "Selecionar" de um cartão de módulo: marca o checkbox correspondente e rola até a seção "Comando"
     function selecionarModulo(modulo) {
       document.getElementById(`modulo-${modulo}`).checked = true;
       document.querySelector('a[href="#comando"]').click();
       window.scrollTo({ top: document.querySelector('#comando').offsetTop - 100, behavior: 'smooth' });
     }
 
+    // Botão "Consultar Comando" de um cartão de módulo: mostra em alert() o nome do .md de referência (v1.0.2, desatualizado)
     function consultarComando(modulo) {
       const nomeArquivo = {
         diagnostico: 'FLOWGUARDIAN_COMANDO_DIAGNOSTICO_OPERACIONAL.md',
@@ -829,6 +871,7 @@
       alert(`Consulte o arquivo:\n${nomeArquivo[modulo]}\n\nTodos os comandos estão em /outputs/`);
     }
 
+    // Botão "Gerar Diagnóstico": lê todos os campos do formulário e monta o texto do prompt na textarea de saída
     function gerarComando() {
       const projeto = document.getElementById('projeto').value || '[Projeto]';
       const board = document.getElementById('board').value || '[Board]';
@@ -894,6 +937,7 @@ COMECE:
       document.querySelector('a[href="#comando"]').click();
     }
 
+    // Botão "Copiar Comando": seleciona o texto da textarea de saída e copia pra área de transferência
     function copiarComando() {
       const textarea = document.getElementById('output-comando');
       if (textarea.value === '') {
@@ -905,10 +949,12 @@ COMECE:
       alert('✓ Comando copiado para área de transferência!');
     }
 
+    // Botão "Limpar" da seção "Comando Gerado": esvazia só a textarea de saída
     function limparComando() {
       document.getElementById('output-comando').value = '';
     }
 
+    // Botão "Limpar" do formulário: reseta todos os campos de Configuração e também a saída
     function limparFormulario() {
       document.getElementById('projeto').value = '';
       document.getElementById('board').value = '';
@@ -920,7 +966,7 @@ COMECE:
       document.getElementById('output-comando').value = '';
     }
 
-    // NAVEGAÇÃO SIDEBAR
+    // NAVEGAÇÃO SIDEBAR — ao clicar num link do menu, marca só ele como .active (destaque amarelo)
     document.querySelectorAll('.sidebar-nav-link').forEach(link => {
       link.addEventListener('click', function() {
         document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
@@ -928,7 +974,7 @@ COMECE:
       });
     });
 
-    // SMOOTH SCROLL
+    // SMOOTH SCROLL — qualquer link "#âncora" (menu da sidebar) rola suavemente até a seção, em vez de saltar
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
         e.preventDefault();
