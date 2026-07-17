@@ -699,7 +699,7 @@
             <div class="module-card diagnostic">
               <div class="module-header">
                 <div class="module-header-title">Diagnóstico Operacional</div>
-                <div class="module-header-desc">Saúde operacional da sprint</div>
+                <div class="module-header-desc">Como a operação executou o trabalho</div>
               </div>
               <div class="module-content">
                 <h4>Analisa</h4>
@@ -719,11 +719,11 @@
               </div>
             </div>
 
-            <!-- Cartão 2/3 — módulo Impacto Estratégico (borda laranja via .impact) -->
+            <!-- Cartão 2/3 — módulo Diagnóstico Estratégico (borda laranja via .impact) -->
             <div class="module-card impact">
               <div class="module-header">
-                <div class="module-header-title">Impacto Estratégico</div>
-                <div class="module-header-desc">Alinhamento e impacto de entregas</div>
+                <div class="module-header-title">Diagnóstico Estratégico</div>
+                <div class="module-header-desc">Como o esforço gerou valor para o negócio</div>
               </div>
               <div class="module-content">
                 <h4>Analisa</h4>
@@ -741,11 +741,11 @@
               </div>
             </div>
 
-            <!-- Cartão 3/3 — módulo Consolidação Executiva (borda azul via .executive) -->
+            <!-- Cartão 3/3 — módulo Visão Consolidada Executiva (borda azul via .executive) -->
             <div class="module-card executive">
               <div class="module-header">
-                <div class="module-header-title">Consolidação Executiva</div>
-                <div class="module-header-desc">Síntese para liderança</div>
+                <div class="module-header-title">Visão Consolidada Executiva</div>
+                <div class="module-header-desc">O que a liderança precisa saber e decidir</div>
               </div>
               <div class="module-content">
                 <h4>Consolida</h4>
@@ -805,11 +805,11 @@
                 </div>
                 <div class="checkbox-item">
                   <input type="checkbox" id="modulo-impacto" value="impacto">
-                  <label for="modulo-impacto">Impacto Estratégico (3-4 páginas)</label>
+                  <label for="modulo-impacto">Diagnóstico Estratégico (3-4 páginas)</label>
                 </div>
                 <div class="checkbox-item">
                   <input type="checkbox" id="modulo-consolidacao" value="consolidacao">
-                  <label for="modulo-consolidacao">Consolidação Executiva (2-3 páginas)</label>
+                  <label for="modulo-consolidacao">Visão Consolidada Executiva (2-3 páginas)</label>
                 </div>
               </div>
             </div>
@@ -851,8 +851,8 @@
     // Nomes de exibição dos módulos (não usado atualmente pelas funções abaixo, mas disponível para futuras telas)
     const moduloNomes = {
       diagnostico: 'DIAGNÓSTICO OPERACIONAL',
-      impacto: 'IMPACTO ESTRATÉGICO',
-      consolidacao: 'CONSOLIDAÇÃO EXECUTIVA'
+      impacto: 'DIAGNÓSTICO ESTRATÉGICO',
+      consolidacao: 'VISÃO CONSOLIDADA EXECUTIVA'
     };
 
     // Botão "Selecionar" de um cartão de módulo: marca o checkbox correspondente e rola até a seção "Comando"
@@ -881,8 +881,8 @@
 
       const modulosSelecionados = [];
       if (document.getElementById('modulo-diagnostico').checked) modulosSelecionados.push('Diagnóstico Operacional');
-      if (document.getElementById('modulo-impacto').checked) modulosSelecionados.push('Impacto Estratégico');
-      if (document.getElementById('modulo-consolidacao').checked) modulosSelecionados.push('Consolidação Executiva');
+      if (document.getElementById('modulo-impacto').checked) modulosSelecionados.push('Diagnóstico Estratégico');
+      if (document.getElementById('modulo-consolidacao').checked) modulosSelecionados.push('Visão Consolidada Executiva');
 
       if (modulosSelecionados.length === 0) {
         alert('Selecione pelo menos um módulo!');
