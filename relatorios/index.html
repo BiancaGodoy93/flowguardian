@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowGuardian Insights — Relatórios</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --blue:#0245B5;--blue-dark:#012B70;--yellow:#FFD100;--orange:#FF6900;
+    --bg:#F5F7FB;--text:#27364A;--muted:#65758B;--border:#D8E0EF;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.58}
+  .page{max-width:1040px;margin:0 auto;padding:56px 40px 72px}
+  .crumb{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+  .crumb a{color:var(--blue);text-decoration:none;font-weight:700}
+  .crumb a:hover{text-decoration:underline}
+  .brand{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--blue);font-weight:800}
+  .hero{background:var(--blue-dark);color:#EAF2FF;border-radius:22px;padding:40px 46px;margin:14px 0 34px;box-shadow:0 10px 34px rgba(1,43,112,.16);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,209,0,.14)}
+  .hero .tag{font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--yellow);font-weight:800}
+  .hero h1{font-size:36px;letter-spacing:-.6px;margin:8px 0 12px;line-height:1.08;color:#fff}
+  .hero p{font-size:15.5px;max-width:760px;color:#DCE8FF}
+  .list{display:grid;gap:16px}
+  .item{background:#fff;border:1px solid var(--border);border-left:6px solid var(--blue);border-radius:16px;padding:22px 24px;display:flex;justify-content:space-between;align-items:center;gap:18px;transition:transform .15s ease,box-shadow .15s ease;text-decoration:none}
+  .item:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(1,43,112,.12)}
+  .item .t{font-size:19px;font-weight:800;color:var(--blue-dark);letter-spacing:-.2px}
+  .item .s{font-size:13px;color:var(--muted);margin-top:3px}
+  .item .badge{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#fff;background:var(--blue);padding:8px 14px;border-radius:9px;white-space:nowrap}
+  footer{margin-top:40px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--border);padding-top:18px}
+  @media (max-width:720px){.page{padding:34px 20px}.item{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="crumb"><a href="../">&larr; FlowGuardIAn</a> · Relatórios</div>
+  <div class="brand">FlowGuardIAn</div>
+  <div class="hero">
+    <div class="tag">Insights</div>
+    <h1>Relatórios</h1>
+    <p>Coleções de diagnósticos executivos por board e período. Cada coleção reúne o Diagnóstico Operacional, o Diagnóstico Estratégico e a Visão Consolidada Executiva.</p>
+  </div>
+
+  <div class="list">
+    <a class="item" href="frota-junho-2026/">
+      <div>
+        <div class="t">Frota · Junho/2026</div>
+        <div class="s">Board Dev: Frota (2726) · 28 cards · fonte: exportação manual (CSV Jira)</div>
+      </div>
+      <div class="badge">Abrir coleção &rarr;</div>
+    </a>
+  </div>
+
+  <footer>
+    <b>FlowGuardIAn Insights.</b> Diagnósticos sem faróis ou classificação subjetiva; lacunas de dado são declaradas, não estimadas.
+  </footer>
+
+</div>
+</body>
+</html>

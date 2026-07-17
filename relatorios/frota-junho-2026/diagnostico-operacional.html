@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowGuardIAn — Diagnóstico Operacional · Frota · Junho/2026</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --blue:#0245B5;--blue-dark:#012B70;--yellow:#FFD100;--orange:#FF6900;
+    --bg:#F5F7FB;--text:#27364A;--muted:#65758B;--border:#D8E0EF;
+    --green:#1B8A5A;--red:#B5341F;--soft-blue:#EEF4FF;--soft-yellow:#FFF9DA;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    color:var(--text);background:var(--bg);line-height:1.58;
+  }
+  .page{
+    max-width:980px;margin:0 auto;background:#fff;padding:52px 62px 64px;
+    box-shadow:0 4px 24px rgba(1,43,112,.07)
+  }
+  header{border-bottom:6px solid var(--yellow);padding-bottom:24px;margin-bottom:18px}
+  .kicker{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-weight:800}
+  h1{font-size:31px;color:var(--blue-dark);letter-spacing:-.5px;margin:6px 0 4px;line-height:1.15}
+  .sub{color:var(--muted);font-size:13.5px}
+  h2{
+    font-size:20px;color:var(--blue-dark);margin:38px 0 12px;padding-left:12px;
+    border-left:4px solid var(--blue)
+  }
+  h3{font-size:15px;color:var(--blue-dark);margin:20px 0 7px}
+  p{margin:8px 0;font-size:14px}
+  .lead{font-size:15px}
+  .mono{font-family:'Monaco','Courier New',monospace;font-size:11.5px;background:var(--bg);padding:2px 6px;border-radius:5px}
+  .exec{
+    background:var(--blue-dark);color:#EAF2FF;border-radius:16px;padding:26px 28px;margin:20px 0 24px
+  }
+  .exec h2{color:#fff;border:none;padding:0;margin:0 0 10px}
+  .exec p{font-size:14.5px;color:#EAF2FF}
+  .exec b{color:var(--yellow)}
+  .context{
+    border:1px solid var(--border);border-radius:13px;padding:16px 18px;margin:18px 0;background:var(--bg)
+  }
+  .context b{color:var(--blue-dark)}
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:18px 0}
+  .kpi{border:1px solid var(--border);border-radius:12px;padding:14px;background:#fff}
+  .kpi .v{font-size:22px;font-weight:800;color:var(--blue-dark);line-height:1.1}
+  .kpi .u{font-size:11px;color:var(--blue);font-weight:700;margin-top:2px}
+  .kpi .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px;margin-top:6px}
+  .kpi.nd{background:repeating-linear-gradient(135deg,#fff,#fff 7px,#FDF0EC 7px,#FDF0EC 14px);border-color:#EBC4BB}
+  .kpi.nd .v{font-size:15px;color:var(--red);padding-top:4px}
+  .kpi.nd .u{color:var(--red)}
+  .themes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+  .theme{border:1px solid var(--border);border-radius:13px;padding:16px;background:#fff}
+  .theme .num{font-size:11px;font-weight:800;color:var(--orange);letter-spacing:.7px;text-transform:uppercase}
+  .theme h3{margin:4px 0 8px}
+  .theme .label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:10px}
+  .theme p{font-size:13px;margin:3px 0}
+  .note{
+    background:linear-gradient(90deg,rgba(255,209,0,.18),rgba(255,255,255,1));
+    border-left:6px solid var(--yellow);padding:14px 18px;border-radius:10px;margin:16px 0;font-size:13.5px
+  }
+  .note.orange{border-left-color:var(--orange);background:linear-gradient(90deg,rgba(255,105,0,.12),#fff)}
+  .note.red{border-left-color:var(--red);background:linear-gradient(90deg,rgba(181,52,31,.10),#fff)}
+  .section-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+  .box{border:1px solid var(--border);border-radius:12px;padding:16px}
+  .box h4{font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px}
+  .fact h4{color:var(--blue-dark)} .infer h4{color:var(--orange)}
+  .hyp h4{color:var(--muted)} .basis h4{color:var(--green)}
+  table{width:100%;border-collapse:collapse;margin:15px 0;font-size:12.5px}
+  th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--bg);color:var(--blue-dark);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}
+  td.k{font-weight:700;color:var(--blue);white-space:nowrap}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  td.nd{color:var(--red);font-style:italic}
+  .ev{font-size:12.5px;color:var(--muted)}
+  .ev b{color:var(--text)}
+  ul{margin:8px 0 8px 20px;font-size:14px}
+  li{margin:5px 0}
+  .chapter-end{
+    margin-top:12px;padding:12px 14px;border-radius:9px;background:var(--soft-blue);
+    font-size:13px;color:var(--blue-dark)
+  }
+  .actions{display:grid;gap:12px;margin-top:14px}
+  .action{
+    border:1px solid var(--border);border-left:5px solid var(--blue);border-radius:10px;padding:14px 16px
+  }
+  .action .meta{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:800}
+  .action h3{margin:4px 0 5px}
+  .action p{font-size:13px}
+  .verdict{
+    display:flex;gap:18px;align-items:flex-start;background:linear-gradient(90deg,rgba(255,209,0,.16),#fff);
+    border-left:6px solid var(--yellow);border-radius:12px;padding:18px 22px;margin:18px 0
+  }
+  .verdict .q{font-weight:800;color:var(--blue-dark);font-size:15px;min-width:170px}
+  .appendix{
+    margin-top:48px;padding-top:30px;border-top:4px solid var(--blue-dark)
+  }
+  .tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
+  .t-c{background:rgba(27,138,90,.12);color:var(--green)}
+  .t-x{background:rgba(181,52,31,.1);color:var(--red)}
+  .t-nd{background:rgba(181,52,31,.12);color:var(--red)}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0 4px;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+  footer{margin-top:46px;padding-top:18px;border-top:2px solid var(--border);font-size:11px;color:var(--muted)}
+  @media (max-width:800px){
+    .page{padding:34px 22px}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .themes,.section-grid{grid-template-columns:1fr}
+    .verdict{display:block}.verdict .q{margin-bottom:8px}
+  }
+  @media print{
+    body{background:#fff}.page{box-shadow:none;padding:28px}
+    .appendix{page-break-before:always}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="kicker">FlowGuardIAn · Diagnóstico Operacional · v3.1</div>
+  <h1>Projeto B2B — Cards resolvidos em junho/2026</h1>
+  <div class="sub">Board Dev: Frota (2726) · Coorte por período (<span class="mono">resolved em junho/2026</span>) + análise em modo sprint de SP 10 e SP 11 (Seção 6) · Gerado em 17/07/2026</div>
+</header>
+
+<div class="note red">
+  <b>Origem dos dados: exportação manual (CSV do Jira, sem changelog).</b> Esta análise foi produzida a partir de exportação manual — não da API REST com histórico de transições. Toda métrica que depende do <b>changelog de status</b> está marcada como <span class="tag t-nd">NÃO DISPONÍVEL · export manual</span> ao longo do relatório, com a razão. Isso é exigência da metodologia (Seção 7): lacuna de dado é declarada, nunca preenchida por estimativa. O detalhamento completo do que falta está na <b>Seção 6 — Limitações da Fonte</b>.
+</div>
+
+<div class="exec">
+  <h2>Resumo Executivo</h2>
+  <p>Dos 28 cards encerrados em junho no board Frota, <b>24 foram concluídos e 4 cancelados (14%)</b>. O throughput entregue foi de <b>1,09 card/dia útil</b>. O sinal operacional mais forte é a <b>cauda de Lead Time</b>: a mediana dos concluídos é de <b>44 dias úteis</b>, mas cinco cards ultrapassaram 100 dias úteis (o maior, B2B-1241, com 235). A entrega de destaque foi a frente regulatória de <b>CNPJ alfanumérico</b> (épico B2B-504), com 8 cards concluídos e nenhum cancelado. O principal risco é de <b>previsibilidade</b>: com a exportação manual conseguimos medir <i>quanto tempo</i> os cards levaram, mas <b>não onde o tempo foi gasto</b> — a análise de gargalos, Cycle Time, aging e reaberturas depende do changelog, que não vem nesta fonte.</p>
+</div>
+
+<div class="context">
+  <b>Natureza do recorte.</b> A consulta considera itens com <span class="mono">resolved</span> em junho/2026, e não uma sprint. Como é uma coorte de encerramentos sem linha de base de planejamento, o modo é <b>período</b> (D08): as métricas de Planejado × Executado, Taxa de Conclusão e mudança de escopo (MET-05, 06, 09) são <b>Não aplicáveis</b> por construção — não por falta de dado. O foco é fluxo, triagem, rastreabilidade e composição do esforço.
+</div>
+
+<div class="legend">
+  <span><span class="dot" style="background:var(--green)"></span> Calculável com a exportação manual</span>
+  <span><span class="dot" style="background:var(--red)"></span> Não disponível na exportação manual (exige changelog)</span>
+  <span><span class="dot" style="background:var(--muted)"></span> Não aplicável ao modo período</span>
+</div>
+
+<h2>Indicadores Auditáveis</h2>
+<div class="kpis">
+  <div class="kpi"><div class="v">1,09</div><div class="u">cards/dia útil</div><div class="l">Throughput entregue</div></div>
+  <div class="kpi"><div class="v">38</div><div class="u">dias úteis</div><div class="l">Lead Time mediano (todos)</div></div>
+  <div class="kpi"><div class="v">50,1</div><div class="u">dias úteis</div><div class="l">Lead Time médio (todos)</div></div>
+  <div class="kpi"><div class="v">24</div><div class="u">cards</div><div class="l">Concluídos</div></div>
+  <div class="kpi"><div class="v">4</div><div class="u">cards</div><div class="l">Cancelados</div></div>
+  <div class="kpi nd"><div class="v">n/d</div><div class="u">export manual</div><div class="l">Reaberturas · Cycle Time · Aging</div></div>
+</div>
+
+<div class="note orange">
+  <b>Ressalva — Lead Time é o teto do que a fonte permite.</b> Lead Time (criação → conclusão) é calculável porque as duas datas vêm no CSV. Já o <b>Cycle Time</b> (início efetivo em Desenvolvimento → conclusão) exige a primeira transição de status para DESENVOLVIMENTO, que só existe no changelog. Por isso o Lead Time não pode ser decomposto: sabemos que B2B-1241 levou 235 dias úteis, mas <b>não</b> quanto disso foi espera em backlog, refinamento ou desenvolvimento.
+</div>
+
+<h2>Principais Temas do Período</h2>
+<div class="themes">
+  <div class="theme">
+    <div class="num">Tema 01</div>
+    <h3>Cauda de Lead Time</h3>
+    <div class="label">Fato</div>
+    <p>5 dos 24 concluídos passaram de 100 dias úteis (235, 121, 116, 110, 103). Mediana dos concluídos: 44.</p>
+    <div class="label">Leitura</div>
+    <p>Há itens que ficaram meses no sistema antes de encerrar. A distribuição é assimétrica: mediana baixa, cauda longa.</p>
+    <div class="label">Impacto</div>
+    <p>Previsibilidade comprometida. Onde a espera ocorreu não é visível nesta fonte.</p>
+  </div>
+  <div class="theme">
+    <div class="num">Tema 02</div>
+    <h3>Entrega regulatória concentrada</h3>
+    <div class="label">Fato</div>
+    <p>8 dos 24 concluídos pertencem ao épico B2B-504 (CNPJ alfanumérico), todos entregues em 30/jun.</p>
+    <div class="label">Leitura</div>
+    <p>Um terço da entrega do mês veio de uma única frente, fechada em bloco no fim do período.</p>
+    <div class="label">Impacto</div>
+    <p>Boa rastreabilidade da iniciativa; risco de concentração de deploy no fechamento.</p>
+  </div>
+  <div class="theme">
+    <div class="num">Tema 03</div>
+    <h3>Sucessão registrada em comentário</h3>
+    <div class="label">Fato</div>
+    <p>2 dos 4 cancelados foram continuados em outras chaves (B2B-1389→1451, B2B-1452→1453) — só no texto do comentário.</p>
+    <div class="label">Leitura</div>
+    <p>A continuidade do trabalho existe, mas não como vínculo estruturado no Jira.</p>
+    <div class="label">Impacto</div>
+    <p>O Lead Time da chave original deixa de representar o ciclo real do problema.</p>
+  </div>
+</div>
+
+<h2>1. Fluxo</h2>
+<table>
+  <tr><th>Métrica</th><th class="num">n</th><th class="num">Mín.</th><th class="num">Mediana</th><th class="num">Média</th><th class="num">Máx.</th></tr>
+  <tr><td>Lead Time — todos</td><td class="num">28</td><td class="num">0</td><td class="num">38</td><td class="num">50,1</td><td class="num">235</td></tr>
+  <tr><td>Lead Time — concluídos</td><td class="num">24</td><td class="num">0</td><td class="num">44</td><td class="num">54,6</td><td class="num">235</td></tr>
+  <tr><td>Lead Time — cancelados</td><td class="num">4</td><td class="num">0</td><td class="num">5,5</td><td class="num">23,0</td><td class="num">81</td></tr>
+  <tr><td>Cycle Time — início efetivo em Dev</td><td class="nd" colspan="5">Não disponível na exportação manual — exige changelog (primeira transição para DESENVOLVIMENTO, D04). Proibida aproximação por outro campo.</td></tr>
+</table>
+<p><b>Leitura:</b> a coorte tem mediana de Lead Time moderada (38 d.u.) com forte assimetria à direita. Os cancelados encerram rápido (mediana 5,5 d.u.) — coerente com cancelamento por triagem, não por esgotamento de tentativa. Todo o Lead Time aqui é de calendário do card; a parcela de execução efetiva não é separável sem o changelog.</p>
+<div class="chapter-end"><b>Conclusão do capítulo:</b> o fluxo é medível apenas no agregado (ponta a ponta). A decomposição entre espera e execução — que apontaria a causa da cauda — não é possível com esta fonte.</div>
+
+<h2>2. Gargalos <span class="tag t-nd">NÃO DISPONÍVEL · export manual</span></h2>
+<div class="note red">
+  <b>Seção não calculável nesta fonte.</b> A identificação do status de maior permanência por card (fila de intake, refinamento, "Pronto para Desenvolvimento", homologação etc.) depende do tempo em cada status, que só existe no <b>changelog de transições</b>. A exportação manual traz apenas o status <i>atual</i> e a data de atualização — insuficiente para reconstruir onde cada card ficou represado. Reexecutar via Jira REST API (<span class="mono">expand=changelog</span>) preenche esta seção integralmente.
+</div>
+
+<h2>3. Bloqueios <span class="tag t-nd">NÃO DISPONÍVEL · export manual</span></h2>
+<div class="note red">
+  <b>Sem evidência de bloqueio recuperável nesta fonte.</b> A duração de bloqueio segue cascata (D09): flag via changelog → comentário datado de espera → Não calculável. Nesta exportação, o nível 1 (flag) é inacessível por falta de changelog. O nível 2 foi verificado: <b>a varredura dos comentários dos 28 cards não encontrou registro datado de bloqueio/ambiente/espera</b>. Portanto a duração de bloqueio é <b>Não calculável</b> para toda a coorte — não que não houve bloqueio, e sim que a fonte não permite afirmá-lo nem quantificá-lo.
+</div>
+
+<h2>4. Qualidade do Processo</h2>
+<ul>
+  <li><b>Estimativas:</b> 22 de 28 cards (79%) possuem story points — cobertura alta. A soma de pontos dos concluídos é 103. <span class="ev">(A precisão da estimativa — planejado × real — não é avaliável no modo período.)</span></li>
+  <li><b>Registro do fluxo:</b> <span class="tag t-nd">n/d</span> a proporção de cards movidos "em lote" (mesmo dia Dev→Concluído) não é verificável sem changelog. Observa-se, porém, que 8 cards do épico B2B-504 compartilham a mesma data de resolução (30/jun), o que <i>sugere</i> fechamento em bloco — hipótese, não fato.</li>
+  <li><b>Classificação de resolução:</b> B2B-759 foi encerrado como <b>Cancelado</b>, mas o comentário registra "realizado ajuste... para que o portal atualizasse o boleto" — indício de entrega classificada como cancelamento (possível subnotificação). Evidência textual disponível; confirmação exige o card.</li>
+</ul>
+
+<h2>5. Governança</h2>
+<ul>
+  <li><b>Reaberturas:</b> <span class="tag t-nd">n/d</span> retorno de CONCLUÍDO para status anterior (MET-08) só é detectável no changelog. Não é possível afirmar 0 nem N reaberturas com esta fonte.</li>
+  <li><b>Sucessão / duplicação de rastreio:</b> 2 cancelados continuaram sob outras chaves — B2B-1389 → B2B-1451 e B2B-1452 → B2B-1453 — registrado apenas em comentário, sem link estruturado.</li>
+  <li><b>Triagem de intake:</b> B2B-1474 cancelado com o comentário "aberto indevidamente" — card criado e encerrado no mesmo dia (16/jun).</li>
+  <li><b>Cards órfãos:</b> 5 dos 28 não têm campo Pai preenchido (B2B-1241, 1282, 1441, 1442, 1474). Vínculo a épico ausente nesta fonte para esses itens.</li>
+</ul>
+
+<h2>6. Modo Sprint — SP 10 e SP 11 <span class="tag t-c">Sprint Report</span></h2>
+<div class="context">
+  <b>Por que esta seção existe separada.</b> A coorte de junho (Seções 1–5) é modo <b>período</b> — não tem baseline, então Planejado × Executado e Taxa de Conclusão são Não aplicáveis. Mas os <b>Sprint Reports do SP 10 e SP 11</b> trazem a baseline (escopo no início da sprint). Com eles, essas métricas passam a ser calculáveis <b>em modo sprint</b>. As duas leituras não se fundem (D08: o modo é binário por análise) — convivem lado a lado. O mesmo card pode aparecer "não entregue" no fechamento da sprint e "concluído" na coorte de junho; isso não é contradição, é o efeito de fila de deploy no limite da sprint.
+</div>
+
+<div class="note orange">
+  <b>Atenção — o "Itens concluídas" do Jira conta cards em AGUARDANDO DEPLOY como concluídos.</b> Pela D03, entrega = exclusivamente o status <b>CONCLUÍDO</b>; Aguardando Deploy é fila de espera e <b>nunca é entrega, sem exceção</b>. O Sprint Report do Jira agrupa ambos sob "Itens concluídas". Por isso, abaixo, cada sprint mostra duas colunas: a <b>leitura do Jira</b> (bucket "Itens concluídas") e a <b>entrega efetiva por D03</b> (só CONCLUÍDO no fechamento). A diferença entre as duas é exatamente o volume parado em AGUARDANDO DEPLOY.</div>
+
+<table>
+  <tr><th>Sprint</th><th class="num">Comprometido no início<br>(cards / pts)</th><th class="num">Inseridos após início<br>(MET-09a, *)</th><th class="num">"Itens concluídas"<br>leitura Jira (cards / pts)</th><th class="num">Entrega efetiva D03<br>CONCLUÍDO (cards / pts)</th><th class="num">Em AGUARDANDO DEPLOY<br>contado como done (cards / pts)</th><th class="num">Taxa de Conclusão<br>(D03, comprometido)</th></tr>
+  <tr><td class="k">SP 10<br><span class="ev">01–15/jun</span></td><td class="num">17 / 82</td><td class="num">5</td><td class="num">9 / 33</td><td class="num">5 / 12</td><td class="num">4 / 21</td><td class="num">2/17 = 12%</td></tr>
+  <tr><td class="k">SP 11<br><span class="ev">15–30/jun</span></td><td class="num">17 / 98</td><td class="num">5</td><td class="num">9 / 46</td><td class="num">0 / 0</td><td class="num">9 / 46</td><td class="num">0/17 = 0%</td></tr>
+</table>
+
+<h3>Leitura — SP 10</h3>
+<p>Dos 9 cards que o Jira lista como "Itens concluídas", <b>5 estavam de fato CONCLUÍDO</b> no fechamento (B2B-1177, 1282, 1408*, 1441*, 1442*) e <b>4 estavam em AGUARDANDO DEPLOY</b> (B2B-534, 1241, 1256, 1266 — 21 pontos), contados como entregues pelo board mas não entregues pela D03. Esses 4 só viraram CONCLUÍDO em 23/jun, já dentro do SP 11. Taxa de Conclusão do comprometido, pela régua de entrega: <b>2 de 17 cards (12%)</b> — os inseridos após o início (1408, 1441, 1442) contam como escopo adicionado (MET-09a), não como aderência ao plano.</p>
+
+<h3>Leitura — SP 11</h3>
+<p>Caso extremo e didático: <b>os 9 cards do bucket "Itens concluídas" estavam TODOS em AGUARDANDO DEPLOY no fechamento</b> (30/jun 9:34). Pela D03, a entrega efetiva no instante do fechamento foi <b>0 de 17 cards comprometidos (0%)</b>, embora o board reporte 46 pontos "concluídos". Os 8 cards do CNPJ alfanumérico (B2B-504) resolveram como CONCLUÍDO ainda em 30/jun, horas depois do fechamento — por isso aparecem entregues na coorte de junho (Seção 1), mas não no fechamento do SP 11. É o mesmo trabalho lido por duas âncoras diferentes.</p>
+
+<div class="note red">
+  <b>Ainda Não disponível em modo sprint:</b> <span class="tag t-nd">MET-09b</span> cards removidos após o início (some do Sprint Report, exige changelog) e <span class="tag t-nd">MET-09c por card</span> re-estimativa de pontos por item (o Report só mostra o agregado 21→33 e 44→46; a variação por card exige changelog). Cycle Time, Aging, gargalos, reaberturas e bloqueio seguem indisponíveis, como no modo período.
+</div>
+<div class="chapter-end"><b>Conclusão do capítulo:</b> em modo sprint, a métrica de entrega só é honesta quando se aplica a D03. A leitura direta do Jira infla a conclusão porque trata AGUARDANDO DEPLOY como entrega — nas duas sprints a diferença foi material (21 e 46 pontos).</div>
+
+<h2>7. Limitações da Fonte — o que a exportação manual não entrega</h2>
+<p>Mapa direto entre o catálogo de métricas (Apêndice Quantitativo) e a disponibilidade nesta exportação:</p>
+<table>
+  <tr><th>Métrica / Seção</th><th>Status nesta fonte</th><th>Motivo</th></tr>
+  <tr><td class="k">MET-01 Throughput</td><td><span class="tag t-c">Calculável</span></td><td class="ev">Status + data de conclusão presentes.</td></tr>
+  <tr><td class="k">MET-02 Lead Time</td><td><span class="tag t-c">Calculável</span></td><td class="ev">Datas de criação e conclusão presentes.</td></tr>
+  <tr><td class="k">MET-03 Cycle Time</td><td><span class="tag t-nd">Não disponível</span></td><td class="ev">Exige 1ª transição para DESENVOLVIMENTO (changelog).</td></tr>
+  <tr><td class="k">MET-04 Aging</td><td><span class="tag t-nd">Não disponível</span></td><td class="ev">Exige última transição de status (changelog); ademais, coorte só tem cards fechados.</td></tr>
+  <tr><td class="k">MET-05 Planejado × Executado</td><td><span class="tag t-c">Calculável (sprint)</span></td><td class="ev">Não aplicável ao período; calculável em modo sprint via Sprint Report — ver Seção 6.</td></tr>
+  <tr><td class="k">MET-06 Taxa de Conclusão</td><td><span class="tag t-c">Calculável (sprint)</span></td><td class="ev">Idem — Seção 6, aplicando D03 (AGUARDANDO DEPLOY não é entrega).</td></tr>
+  <tr><td class="k">MET-07 Bloqueios (duração)</td><td><span class="tag t-nd">Não disponível</span></td><td class="ev">Flag exige changelog; comentários datados de espera não encontrados.</td></tr>
+  <tr><td class="k">MET-08 Reaberturas</td><td><span class="tag t-nd">Não disponível</span></td><td class="ev">Retorno de CONCLUÍDO só aparece no changelog.</td></tr>
+  <tr><td class="k">MET-09a Inseridos após início</td><td><span class="tag t-c">Parcial (sprint)</span></td><td class="ev">Calculável via marca * do Sprint Report — Seção 6.</td></tr>
+  <tr><td class="k">MET-09b/09c Removidos / re-estimativa</td><td><span class="tag t-nd">Não disponível</span></td><td class="ev">Removidos somem do Report; re-estimativa por card exige changelog.</td></tr>
+  <tr><td class="k">Gargalos (permanência por status)</td><td><span class="tag t-nd">Não disponível</span></td><td class="ev">Tempo em cada status = changelog.</td></tr>
+  <tr><td class="k">Composição por tipo</td><td><span class="tag t-c">Calculável</span></td><td class="ev">Campo Tipo de item presente.</td></tr>
+  <tr><td class="k">Cancelado: desperdício × correção (D02)</td><td><span class="tag t-nd">Parcial</span></td><td class="ev">A subdivisão formal exige saber se entrou em Dev (changelog); há indício por comentário.</td></tr>
+  <tr><td class="k">Rastreabilidade / sucessões</td><td><span class="tag t-c">Parcial</span></td><td class="ev">Recuperável por comentário (texto), não por vínculo estruturado.</td></tr>
+</table>
+<div class="chapter-end"><b>Conclusão do capítulo:</b> a exportação manual sustenta um diagnóstico de <b>volume, composição e ponta a ponta</b>. Tudo que descreve <b>o caminho interno do card</b> (fila, execução, retorno, bloqueio) fica de fora e só retorna com o changelog da API.</div>
+
+<h2>Como chegamos a estas conclusões</h2>
+<div class="section-grid">
+  <div class="box fact">
+    <h4>Fatos</h4>
+    <p>28 cards resolvidos, 24 concluídos e 4 cancelados; Lead Time mediano de 38 d.u. (concluídos 44); throughput 1,09 card/dia útil; 8 concluídos no épico B2B-504; 79% dos cards com story points; 5 cards sem pai; 2 sucessões e 1 "aberto indevidamente" nos comentários.</p>
+  </div>
+  <div class="box infer">
+    <h4>Inferências</h4>
+    <p>A entrega do mês é sólida em volume, mas concentrada numa frente (B2B-504) e com cauda longa de itens antigos. O cancelamento é de triagem, não de esgotamento. A continuidade do trabalho existe fora da chave original.</p>
+  </div>
+  <div class="box hyp">
+    <h4>Hipóteses a validar</h4>
+    <p>O fechamento em bloco de B2B-504 em 30/jun pode indicar atualização de board no encerramento (verificável só no changelog). A cauda de Lead Time pode estar concentrada em espera pré-desenvolvimento — padrão típico, mas não comprovável nesta fonte.</p>
+  </div>
+  <div class="box basis">
+    <h4>Base das recomendações</h4>
+    <p>As ações separam o que melhora o dado (migrar para coleta com changelog) do que melhora o processo (vínculo estruturado, classificação de resolução), com base direta nas evidências do período.</p>
+  </div>
+</div>
+
+<h2>Plano de Ação Recomendado</h2>
+<div class="actions">
+  <div class="action">
+    <div class="meta">Curto prazo · próximas 2 semanas</div>
+    <h3>Migrar a coleta para a API com changelog</h3>
+    <p><b>Ação:</b> passar a extrair via Jira REST com <span class="mono">expand=changelog</span> em vez de exportação manual. <b>Base:</b> Cycle Time, aging, gargalos, reaberturas e bloqueios estão hoje em branco por essa limitação. <b>Efeito esperado:</b> desbloqueia metade do catálogo de métricas sem mudar nada no board.</p>
+  </div>
+  <div class="action">
+    <div class="meta">Curto prazo · próximas 2 semanas</div>
+    <h3>Formalizar sucessão de cards por vínculo</h3>
+    <p><b>Ação:</b> substituir "será tratada no card X" em comentário por link estruturado (<span class="mono">is replaced by</span>) em B2B-1389, B2B-1452 e futuros. <b>Efeito esperado:</b> rastreabilidade por máquina e Lead Time do problema, não só da chave.</p>
+  </div>
+  <div class="action">
+    <div class="meta">Curto prazo · próximas 2 semanas</div>
+    <h3>Corrigir classificação de resolução</h3>
+    <p><b>Ação:</b> revisar B2B-759 — entrega registrada em comentário, porém marcada como Cancelado. Definir que correção efetivamente entregue encerra como Concluída. <b>Efeito esperado:</b> throughput fiel.</p>
+  </div>
+  <div class="action">
+    <div class="meta">Médio prazo · próximas 4 semanas</div>
+    <h3>Vincular os 5 cards órfãos a épico</h3>
+    <p><b>Ação:</b> associar B2B-1241, 1282, 1441, 1442, 1474 a épico ou registrar justificativa de exceção. <b>Efeito esperado:</b> leitura correta de alocação por iniciativa.</p>
+  </div>
+  <div class="action">
+    <div class="meta">Longo prazo · próximos 3 meses</div>
+    <h3>Revisão periódica da cauda de Lead Time</h3>
+    <p><b>Ação:</b> rotina para itens com permanência alta antes de encerrar (5 cards &gt;100 d.u. neste mês). <b>Efeito esperado:</b> redução da cauda e maior previsibilidade — mensurável quando o changelog estiver disponível.</p>
+  </div>
+</div>
+
+<h2>Síntese para Liderança</h2>
+<div class="verdict">
+  <div class="q">O que está acontecendo?<br>O que precisa mudar?</div>
+  <div>
+    <p style="margin-top:0"><b>O mês entregou volume sólido (24 cards, 1,09/dia útil) com uma vitória regulatória clara (CNPJ alfanumérico, 8 cards).</b> O ponto de atenção é a cauda de Lead Time: itens que ficam mais de 100 dias úteis no sistema antes de encerrar. Mas há um limite anterior à análise: <b>a fonte é uma exportação manual</b> e não permite ver o caminho interno dos cards.</p>
+    <p><b>Decisão recomendada:</b> antes de agir sobre gargalos, mudar a coleta para a API com changelog — hoje metade das métricas do diagnóstico está indisponível por causa da fonte, não por causa do processo. Em paralelo, formalizar vínculos de sucessão e corrigir a classificação de resolução, que são de custo baixo e já têm evidência.</p>
+  </div>
+</div>
+
+<section class="appendix">
+  <h2 style="margin-top:0">Anexo A — Evidências Card a Card</h2>
+  <p class="ev">Lead Time em dias úteis (calendário oficial, fuso America/Sao_Paulo). Cycle Time e "maior fila" marcados <span class="tag t-nd">n/d</span> por dependerem do changelog. Observação a partir do comentário quando disponível.</p>
+  <table>
+    <tr><th>Card</th><th>Tipo</th><th>Status</th><th class="num">Lead</th><th class="num">Cycle</th><th>Maior fila</th><th>Pai/Épico</th><th>Observação</th></tr>
+    <tr><td class="k">B2B-1241</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">235</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">—</td><td class="ev">Maior Lead Time do recorte (criado jul/25)</td></tr>
+    <tr><td class="k">B2B-534</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">121</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-953</td><td class="ev">Melhorias Pró-Frotas</td></tr>
+    <tr><td class="k">B2B-451</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">116</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-953</td><td class="ev">Crédito pré-pago não deve expirar</td></tr>
+    <tr><td class="k">B2B-508</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">110</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-953</td><td class="ev">Ajuste template veículo</td></tr>
+    <tr><td class="k">B2B-624</td><td>Bug</td><td><span class="tag t-c">Concl.</span></td><td class="num">103</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-822</td><td class="ev">Cobranças/boletos — ampliação de prazo</td></tr>
+    <tr><td class="k">B2B-561</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">98</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-953</td><td class="ev">Erro extração de transação</td></tr>
+    <tr><td class="k">B2B-1103</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">56</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-504</td><td class="ev">CNPJ — Comanda Digital Revenda</td></tr>
+    <tr><td class="k">B2B-1201</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">44</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-504</td><td class="ev">CNPJ — APP motorista</td></tr>
+    <tr><td class="k">B2B-1202</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">44</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-504</td><td class="ev">CNPJ — APP Gestor</td></tr>
+    <tr><td class="k">B2B-1203</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">44</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-504</td><td class="ev">CNPJ — Comanda Posto Interno</td></tr>
+    <tr><td class="k">B2B-1205</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">44</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-504</td><td class="ev">CNPJ — API Frotista</td></tr>
+    <tr><td class="k">B2B-1206</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">44</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-504</td><td class="ev">CNPJ — API plano de viagem</td></tr>
+    <tr><td class="k">B2B-1207</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">44</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-504</td><td class="ev">CNPJ — API Contratos de Serviço</td></tr>
+    <tr><td class="k">B2B-1177</td><td>Bug</td><td><span class="tag t-c">Concl.</span></td><td class="num">32</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-822</td><td class="ev">Dashboard não carrega</td></tr>
+    <tr><td class="k">B2B-1256</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">31</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-822</td><td class="ev">Débito técnico — senha criptografada</td></tr>
+    <tr><td class="k">B2B-1266</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">31</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-822</td><td class="ev">Débito técnico — reset de senha</td></tr>
+    <tr><td class="k">B2B-1267</td><td>Vulnerab.</td><td><span class="tag t-c">Concl.</span></td><td class="num">31</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">GDVS-23202</td><td class="ev">Credenciais em cleartext — pai cross-projeto</td></tr>
+    <tr><td class="k">B2B-1180</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">25</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-677</td><td class="ev">Ocultação de senha no Portal interno</td></tr>
+    <tr><td class="k">B2B-1282</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">23</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">—</td><td class="ev">Boleto PFGO — órfão</td></tr>
+    <tr><td class="k">B2B-1222</td><td>Bug</td><td><span class="tag t-c">Concl.</span></td><td class="num">19</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-1126</td><td class="ev">Geração de boleto pré-pago</td></tr>
+    <tr><td class="k">B2B-1434</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">16</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-504</td><td class="ev">CNPJ — Portal Frota (13 pts)</td></tr>
+    <tr><td class="k">B2B-1408</td><td>Bug</td><td><span class="tag t-c">Concl.</span></td><td class="num">0</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-1126</td><td class="ev">Cancelamento boleto — criado e concluído no dia</td></tr>
+    <tr><td class="k">B2B-1441</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">0</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">—</td><td class="ev">Ajuste de saldo pré-pago — órfão, mesmo dia</td></tr>
+    <tr><td class="k">B2B-1442</td><td>História</td><td><span class="tag t-c">Concl.</span></td><td class="num">0</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">—</td><td class="ev">Recuperação de boleto — órfão, mesmo dia</td></tr>
+    <tr><td class="k">B2B-759</td><td>Bug</td><td><span class="tag t-x">Canc.</span></td><td class="num">81</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-822</td><td class="ev">Comentário indica ajuste realizado — possível subnotificação de entrega</td></tr>
+    <tr><td class="k">B2B-1389</td><td>História</td><td><span class="tag t-x">Canc.</span></td><td class="num">10</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-1126</td><td class="ev">Sucessão → B2B-1451 (em comentário)</td></tr>
+    <tr><td class="k">B2B-1452</td><td>História</td><td><span class="tag t-x">Canc.</span></td><td class="num">1</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">B2B-1126</td><td class="ev">Sucessão → B2B-1453 (em comentário)</td></tr>
+    <tr><td class="k">B2B-1474</td><td>Bug</td><td><span class="tag t-x">Canc.</span></td><td class="num">0</td><td class="nd">n/d</td><td class="nd">n/d</td><td class="ev">—</td><td class="ev">"Aberto indevidamente" — órfão, mesmo dia</td></tr>
+  </table>
+</section>
+
+<footer>
+  <b>FlowGuardIAn v3.1 — Diagnóstico Operacional.</b> Modelo de estrutura sem faróis ou classificação subjetiva. Fonte: <b>exportação manual (CSV Jira)</b> — cobertura 28/28 cards da coorte; métricas em dias úteis. Campos dependentes de changelog declarados Não disponíveis, conforme Seção 7 do Apêndice Quantitativo. Fatos, inferências, hipóteses e recomendações permanecem explicitamente separados.
+</footer>
+
+</div>
+</body>
+</html>
